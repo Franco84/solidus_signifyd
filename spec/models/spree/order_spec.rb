@@ -5,7 +5,7 @@ describe Spree::Order, :type => :model do
   let!(:order) { create(:order_ready_to_ship, line_items_count: 1) }
 
   before do
-    order.shipments.each { |shipment| shipment.update_attributes!(state: 'pending') }
+    order.shipments.each { |shipment| shipment.update!(state: 'pending') }
     order.updater.update_shipment_state
   end
 
@@ -17,10 +17,10 @@ describe Spree::Order, :type => :model do
     end
 
     context "signifyd_score present" do
-      before { SpreeSignifyd.set_score(score: 500, order: order) }
+      before { SolidusSignifyd.set_score(score: 500, order: order) }
 
       context "approved" do
-        before { SpreeSignifyd.approve(order: order) }
+        before { SolidusSignifyd.approve(order: order) }
         it { is_expected.to eq false }
       end
 
@@ -35,14 +35,14 @@ describe Spree::Order, :type => :model do
 
     shared_examples "an order we send to signifyd" do
       it "creates a new SIGNIFYD case" do
-        expect(SpreeSignifyd).to receive(:create_case).with(order_number: order.number)
+        expect(SolidusSignifyd).to receive(:create_case).with(order_number: order.number)
         order.complete!
       end
     end
 
     shared_examples "an order we DO NOT send to signifyd" do
       it "does not create a new SIGNIFYD case" do
-        expect(SpreeSignifyd).not_to receive(:create_case)
+        expect(SolidusSignifyd).not_to receive(:create_case)
         order.complete!
       end
     end
@@ -53,7 +53,7 @@ describe Spree::Order, :type => :model do
       it_behaves_like "an order we send to signifyd"
 
       context "don't send store credit orders to SIGNIFYD" do
-        before { SpreeSignifyd::Config[:exclude_store_credit_orders] = true }
+        before { SolidusSignifyd::Config[:exclude_store_credit_orders] = true }
 
         it_behaves_like "an order we DO NOT send to signifyd"
 

@@ -1,28 +1,32 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 branch = ENV.fetch('SOLIDUS_BRANCH', 'master')
-gem "solidus", github: "solidusio/solidus", branch: branch
+solidus_git, solidus_frontend_git = if (branch == 'master') || (branch >= 'v3.2')
+                                      %w[solidusio/solidus solidusio/solidus_frontend]
+                                    else
+                                      %w[solidusio/solidus] * 2
+                                    end
+gem 'solidus', github: solidus_git, branch: branch
+gem 'solidus_frontend', github: solidus_frontend_git, branch: branch
 
-if branch != 'master' && branch < "v2.0"
-  gem "rails_test_params_backport", group: :test
-end
+# Needed to help Bundler figure out how to resolve dependencies,
+# otherwise it takes forever to resolve them.
+# See https://github.com/bundler/bundler/issues/6677
+gem 'rails', '>0.a'
 
-group :development, :test do
-  gem "pry-rails"
-end
+# Provides basic authentication functionality for testing parts of your engine
+gem 'solidus_auth_devise'
 
-if ENV['DB'] == 'mysql'
+case ENV['DB']
+when 'mysql'
   gem 'mysql2'
-else
+when 'postgresql'
   gem 'pg'
-end
-
-group :test do
-  if branch < "v2.5"
-    gem 'factory_bot', '4.10.0'
-  else
-    gem 'factory_bot', '> 4.10.0'
-  end
+else
+  gem 'sqlite3'
 end
 
 gemspec

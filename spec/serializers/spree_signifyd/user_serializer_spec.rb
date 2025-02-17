@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-module SpreeSignifyd
+module SolidusSignifyd
   describe UserSerializer do
     let(:user) { create(:user) }
     let!(:incomplete_order) { create(:order, user: user) }
@@ -10,7 +10,7 @@ module SpreeSignifyd
     let(:serialized_user) { JSON.parse(UserSerializer.new(user).to_json) }
 
     before do
-      old_complete_order.update_attributes(completed_at: 30.days.ago)
+      old_complete_order.update(completed_at: 30.days.ago)
     end
 
     context "node values" do

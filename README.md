@@ -1,10 +1,10 @@
 Solidus Signifyd
 ================
 
+[![CircleCI](https://circleci.com/gh/solidusio-contrib/solidus_signifyd.svg?style=svg)](https://circleci.com/gh/solidusio-contrib/solidus_signifyd)
+
 Integration with Signifyd that implements a fraud check prior to marking a
 shipment as ready to be shipped.
-
-[![Build Status](https://travis-ci.org/solidusio/solidus_signifyd.svg?branch=master)](https://travis-ci.org/solidusio/solidus_signifyd)
 
 * All orders are sent to SIGNIFYD for scoring when they transition to complete.
 * Risk analysis is returned from SIGNIFYD via a webhook and added to order.
@@ -33,12 +33,12 @@ bundle exec rails g solidus_signifyd:install
 Create a SIGNIFYD test team within the SIGNIFYD account. The API key is listed on the Teams page after a team has been created.
 
 Create SIGNIFYD notifications for each event type and provide your
-`api_spree_signifyd_orders_path`. To work with external webhook in local
+`api_solidus_signifyd_orders_path`. To work with external webhook in local
 development you may need to change the rails server [default host] and enable
 port forwarding or setup a reverse SSH tunnel.
 
 ```
-http://www.example.com/api/spree_signifyd/orders
+http://www.example.com/api/solidus_signifyd/orders
 ```
 
 Cases can be inspected in the SIGNIFYD web console.
